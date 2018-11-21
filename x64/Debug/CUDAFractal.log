@@ -1,0 +1,18 @@
+﻿  
+  C:\Users\danie\Desktop\CUDAFractal\CUDAFractal\CUDAFractal>"D:\CUDA\Dev\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\bin\HostX86\x64" -x cu  -ID:\CUDA\Dev\include -ID:\CUDA\Dev\include  -G   --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile   -g   -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od  /FS /Zi /RTC1 /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\danie\Desktop\CUDAFractal\CUDAFractal\CUDAFractal\kernel.cu" -clean 
+  kernel.cu
+  Compiling CUDA source file kernel.cu...
+  
+  C:\Users\danie\Desktop\CUDAFractal\CUDAFractal\CUDAFractal>"D:\CUDA\Dev\bin\nvcc.exe" -gencode=arch=compute_35,code=\"sm_35,compute_35\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\bin\HostX86\x64" -x cu  -ID:\CUDA\Dev\include -ID:\CUDA\Dev\include  -G   --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static  -g   -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc141.pdb /FS /Zi /RTC1 /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\danie\Desktop\CUDAFractal\CUDAFractal\CUDAFractal\kernel.cu" 
+C:/Users/danie/Desktop/CUDAFractal/CUDAFractal/CUDAFractal/kernel.cu(11): warning : variable "xMin" was declared but never referenced
+C:/Users/danie/Desktop/CUDAFractal/CUDAFractal/CUDAFractal/kernel.cu(12): warning : variable "xMax" was declared but never referenced
+C:/Users/danie/Desktop/CUDAFractal/CUDAFractal/CUDAFractal/kernel.cu(13): warning : variable "yMin" was declared but never referenced
+C:/Users/danie/Desktop/CUDAFractal/CUDAFractal/CUDAFractal/kernel.cu(14): warning : variable "yMax" was declared but never referenced
+C:/Users/danie/Desktop/CUDAFractal/CUDAFractal/CUDAFractal/kernel.cu(18): error : calling a __host__ function("Complex::Complex") from a __global__ function("iteration") is not allowed
+C:/Users/danie/Desktop/CUDAFractal/CUDAFractal/CUDAFractal/kernel.cu(18): error : identifier "Complex::Complex" is undefined in device code
+C:/Users/danie/Desktop/CUDAFractal/CUDAFractal/CUDAFractal/kernel.cu(26): error : calling a __host__ function("Complex::GetNorm") from a __global__ function("iteration") is not allowed
+C:/Users/danie/Desktop/CUDAFractal/CUDAFractal/CUDAFractal/kernel.cu(26): error : identifier "Complex::GetNorm" is undefined in device code
+C:/Users/danie/Desktop/CUDAFractal/CUDAFractal/CUDAFractal/kernel.cu(29): error : calling a __host__ function("Complex::Pow") from a __global__ function("iteration") is not allowed
+C:/Users/danie/Desktop/CUDAFractal/CUDAFractal/CUDAFractal/kernel.cu(29): error : identifier "Complex::Pow" is undefined in device code
+  kernel.cu
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\BuildCustomizations\CUDA 10.0.targets(712,9): error MSB3721: The command ""D:\CUDA\Dev\bin\nvcc.exe" -gencode=arch=compute_35,code=\"sm_35,compute_35\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\bin\HostX86\x64" -x cu  -ID:\CUDA\Dev\include -ID:\CUDA\Dev\include  -G   --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static  -g   -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc141.pdb /FS /Zi /RTC1 /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\danie\Desktop\CUDAFractal\CUDAFractal\CUDAFractal\kernel.cu"" exited with code 1.
