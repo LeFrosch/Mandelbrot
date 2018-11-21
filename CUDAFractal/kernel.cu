@@ -23,7 +23,6 @@ __device__ const double yMin = -2;
 __device__ const double yMax = 2;
 __device__ const double zoom = 1;
 
-
 __global__ void iteration(int maxIt, int length, int width, int height, int *vec, bool *abort)
 {
 	int loop;
@@ -34,10 +33,11 @@ __global__ void iteration(int maxIt, int length, int width, int height, int *vec
 	double rlC;
 	double xzoom = ((xMax - xMin) / width);
 	double yzoom = ((yMax - yMin) / height);
-	
+
 	for (int i = threadIdx.x; i < length; i += blockDim.x + blockIdx.x)
 	{
-		if (abort) break;
+		if (*abort)
+			break;
 
 		rlC = xzoom * (i / height) - abs(xMin);
 		imC = yzoom * (i % height) - abs(yMin);
@@ -62,6 +62,8 @@ __global__ void iteration(int maxIt, int length, int width, int height, int *vec
 
 int main()
 {
+	cudaFree(0);
+
 	int s;
 	cout << "Size: ";
 	cin >> s;
@@ -73,23 +75,40 @@ int main()
 	int it = 2000;
 
 	int *vec = new int[N];
-	bool *abort;
-
 	cudaMallocManaged(&vec, N * sizeof(int));
-	cudaMallocManaged(&abort, sizeof(bool));
 
-	iteration<<<10, 1024>>>(it, N, size.X * 2, size.Y * 2, vec, abort);
+	for (int i = 0; i < N; i++)
+	{
+		vec[i] = 200;
+	}
 
-	Sleep(3000);
+	bool *habort = new bool;
+	bool *dabort = new bool;
+	cudaHostAlloc(&habort, sizeof(bool), cudaHostAllocDefault);
+	cudaMalloc(&dabort, sizeof(bool));
 
-	gpuErrchk(cudaMemcpy(abort, new bool(true), sizeof(bool), cudaMemcpyHostToDevice));
-	
+	cudaStream_t stream;
+	cudaStreamCreateWithFlags(&stream, cudaStreamNonBlocking);
+
+	*habort = false;
+	cudaMemcpyAsync(dabort, habort, sizeof(bool), cudaMemcpyHostToDevice, stream);
+
+	iteration<<<10, 1024, 0, stream>>>(it, N, size.X * 2, size.Y * 2, vec, dabort);
+
+	//Sleep(1000);
+
+	//cudaMemcpy(habort, new bool(true), sizeof(bool), cudaMemcpyHostToHost);
+	//gpuErrchk(cudaMemcpyAsync(dabort, habort, sizeof(bool), cudaMemcpyHostToDevice, stream));
+
 	gpuErrchk(cudaDeviceSynchronize());
+
+	gpuErrchk(cudaPeekAtLastError());
 
 	createWindow(size, N, it, vec);
 
+	cudaStreamDestroy(stream);
 	cudaFree(vec);
-	cudaFree(abort);
+	cudaFree(dabort);
 
 	return 0;
 }
