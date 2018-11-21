@@ -10,12 +10,19 @@ class Vector2
 		double Y;
 
 		Vector2(double x, double y);
+		Vector2();
 };
 
 Vector2::Vector2(double x, double y)
 {
 	this->X = x;
 	this->Y = y;
+}
+
+Vector2::Vector2() 
+{
+	this->X = 0;
+	this->Y = 0;
 }
 
 #endif

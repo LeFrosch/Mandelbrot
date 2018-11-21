@@ -18,6 +18,9 @@
     <ClInclude Include="vector2.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="parser.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

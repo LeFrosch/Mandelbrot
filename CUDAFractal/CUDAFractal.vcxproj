@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="complex.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="vector2.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>

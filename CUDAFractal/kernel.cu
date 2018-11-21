@@ -6,6 +6,7 @@
 #include <iostream>
 #include "complex.h"
 #include "window.h";
+#include "parser.h"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ __device__ const double yMin = -2;
 __device__ const double yMax = 2;
 __device__ const double zoom = 1;
 
-__global__ void iteration(int maxIt, int length, int width, int height, int *vec, bool *abort)
+__global__ void iteration(int maxIt, int length, int width, int height, int *vec)
 {
 	int loop;
 	double c;
@@ -38,8 +39,6 @@ __global__ void iteration(int maxIt, int length, int width, int height, int *vec
 
 	for (int i = threadIdx.x; i < length; i += blockDim.x + blockIdx.x)
 	{
-		if (*abort) break;
-
 		rlC = xzoom * (i / height) - abs(xMin);
 		imC = yzoom * (i % height) - abs(yMin);
 
@@ -61,8 +60,10 @@ __global__ void iteration(int maxIt, int length, int width, int height, int *vec
 	}
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+	parse(argc, argv);
+
 	cudaFree(0);
 
 	int s;
@@ -81,33 +82,10 @@ int main()
 
 	int *dvec = 0;
 	cudaMalloc((void**)&dvec, N * sizeof(int));
-	
-	bool *habort = new bool;
-	bool *dabort = new bool;
-	cudaHostAlloc(&habort, sizeof(bool), cudaHostAllocDefault);
-	cudaMalloc(&dabort, sizeof(bool));
-
-	cudaStream_t stream;
-	cudaStreamCreateWithFlags(&stream, cudaStreamNonBlocking);
-
-	cudaMemcpy(dabort, habort, sizeof(bool), cudaMemcpyHostToDevice);
 	cudaMemcpy(dvec, hvec, N * sizeof(int), cudaMemcpyHostToDevice);
 
-	int *test = new int[1];
-	memset(test, 0, sizeof(int));
 
-	test[0] = 1;
-
-	cudaMemcpyToSymbol(cabort, test, sizeof(int));
-
-	iteration<<<10, 1024, 0, stream>>>(it, N, size.X * 2, size.Y * 2, dvec, dabort);
-	//Sleep(100);
-
-
-	test[0] = 0;
-	cudaMemcpyToSymbolAsync(cabort, test, sizeof(int), 0, cudaMemcpyHostToDevice, stream);
-	//cudaMemsetAsync(habort, true, sizeof(bool), stream);
-	//cudaMemcpyAsync(dabort, habort, sizeof(bool), cudaMemcpyHostToDevice, stream);
+	iteration<<<10, 1024>>>(it, N, size.X * 2, size.Y * 2, dvec);
 
 	gpuErrchk(cudaDeviceSynchronize());
 	gpuErrchk(cudaPeekAtLastError());
@@ -116,11 +94,8 @@ int main()
 
 	createWindow(size, N, it, hvec);
 
-	cudaStreamDestroy(stream);
 	cudaFree(hvec);
 	cudaFree(dvec);
-	cudaFree(habort);
-	cudaFree(dabort);
 
 	return 0;
 }
