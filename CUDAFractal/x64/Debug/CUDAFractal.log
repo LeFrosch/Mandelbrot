@@ -1,11 +1,10 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : Access to the path 'c:\users\danie\desktop\cudafractal\mandelbrot\x64\debug\cudafractal.exe' is denied.
-  
+﻿  
   C:\Users\danie\Desktop\CUDAFractal\Mandelbrot\CUDAFractal>"D:\CUDA\Dev\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\bin\HostX86\x64" -x cu  -I"C:\Users\danie\Desktop\SFML-2.5.1\include" -ID:\CUDA\Dev\include -ID:\CUDA\Dev\include  -G   --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile   -g   -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od  /FS /Zi /RTC1 /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\danie\Desktop\CUDAFractal\Mandelbrot\CUDAFractal\kernel.cu" -clean 
   kernel.cu
   Compiling CUDA source file kernel.cu...
   
   C:\Users\danie\Desktop\CUDAFractal\Mandelbrot\CUDAFractal>"D:\CUDA\Dev\bin\nvcc.exe" -gencode=arch=compute_35,code=\"sm_35,compute_35\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.15.26726\bin\HostX86\x64" -x cu  -I"C:\Users\danie\Desktop\SFML-2.5.1\include" -ID:\CUDA\Dev\include -ID:\CUDA\Dev\include  -G   --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static  -g   -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc141.pdb /FS /Zi /RTC1 /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\danie\Desktop\CUDAFractal\Mandelbrot\CUDAFractal\kernel.cu" 
-C:/Users/danie/Desktop/CUDAFractal/Mandelbrot/CUDAFractal/kernel.cu(6): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:/Users/danie/Desktop/CUDAFractal/Mandelbrot/CUDAFractal/kernel.cu(8): warning C4067: unexpected tokens following preprocessor directive - expected a newline
 C:\Users\danie\Desktop\SFML-2.5.1\include\SFML/System/String.hpp(527): warning : field of class type without a DLL interface used in a class with a DLL interface
 C:\Users\danie\Desktop\SFML-2.5.1\include\SFML/Window/Window.hpp(549): warning : field of class type without a DLL interface used in a class with a DLL interface
 C:\Users\danie\Desktop\SFML-2.5.1\include\SFML/Graphics/Transformable.hpp(319): warning : field of class type without a DLL interface used in a class with a DLL interface
@@ -36,8 +35,8 @@ C:\Users\danie\Desktop\SFML-2.5.1\include\SFML/Graphics/Shader.hpp(750): warning
 C:\Users\danie\Desktop\SFML-2.5.1\include\SFML/Graphics/Shader.hpp(751): warning : field of class type without a DLL interface used in a class with a DLL interface
 C:\Users\danie\Desktop\SFML-2.5.1\include\SFML/Graphics/Sprite.hpp(220): warning : field of class type without a DLL interface used in a class with a DLL interface
 C:\Users\danie\Desktop\SFML-2.5.1\include\SFML/Graphics/Text.hpp(449): warning : field of class type without a DLL interface used in a class with a DLL interface
-C:/Users/danie/Desktop/CUDAFractal/Mandelbrot/CUDAFractal/kernel.cu(24): warning : variable "zoom" was declared but never referenced
-C:/Users/danie/Desktop/CUDAFractal/Mandelbrot/CUDAFractal/kernel.cu(6): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:/Users/danie/Desktop/CUDAFractal/Mandelbrot/CUDAFractal/kernel.cu(26): warning : variable "zoom" was declared but never referenced
+C:/Users/danie/Desktop/CUDAFractal/Mandelbrot/CUDAFractal/kernel.cu(8): warning C4067: unexpected tokens following preprocessor directive - expected a newline
 C:\Users\danie\Desktop\SFML-2.5.1\include\SFML/System/String.hpp(527): warning : field of class type without a DLL interface used in a class with a DLL interface
 C:\Users\danie\Desktop\SFML-2.5.1\include\SFML/Window/Window.hpp(549): warning : field of class type without a DLL interface used in a class with a DLL interface
 C:\Users\danie\Desktop\SFML-2.5.1\include\SFML/Graphics/Transformable.hpp(319): warning : field of class type without a DLL interface used in a class with a DLL interface
@@ -71,6 +70,6 @@ C:\Users\danie\Desktop\SFML-2.5.1\include\SFML/Graphics/Text.hpp(449): warning :
   kernel.cu
 c:\users\danie\desktop\cudafractal\mandelbrot\cudafractal\window.h(14): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
 c:\users\danie\desktop\cudafractal\mandelbrot\cudafractal\window.h(17): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
-C:/Users/danie/Desktop/CUDAFractal/Mandelbrot/CUDAFractal/kernel.cu(96): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:/Users/danie/Desktop/CUDAFractal/Mandelbrot/CUDAFractal/kernel.cu(105): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
      Creating library C:\Users\danie\Desktop\CUDAFractal\Mandelbrot\x64\Debug\CUDAFractal.lib and object C:\Users\danie\Desktop\CUDAFractal\Mandelbrot\x64\Debug\CUDAFractal.exp
   CUDAFractal.vcxproj -> C:\Users\danie\Desktop\CUDAFractal\Mandelbrot\x64\Debug\CUDAFractal.exe
