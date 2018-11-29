@@ -1,6 +1,5 @@
 #include <iostream>
 #include "kernel.h"
-#include "window.h"
 #include "pngwriter.h"
 #include "parser.h"
 
