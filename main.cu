@@ -16,8 +16,8 @@ int main(int argc, char *argv[])
 
     if (!arg.loop) 
     {
-        int *vec = mandelbrot(iterations, arg.zoom, size, *arg.center, *arg.fix);
-        write(vec, iterations, size, "mandelbrot", arg.folder);
+        double *vec = mandelbrot(iterations, arg.zoom, size, *arg.center, *arg.fix, arg.smooth, arg.smoothVal);
+        write(vec, iterations, size, "mandelbrot", arg.folder, arg.smooth);
     }
     else 
     {
@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
         for(double zoom = arg.zoom; zoom < arg.zoomEnd; zoom += arg.stepsize * arg.m * zoom)  
         {
             cout << zoom << " out of " << arg.zoomEnd << endl;
-            int *vec = mandelbrot(iterations, zoom, size, *arg.center, *arg.fix);
-            write(vec, iterations, size, count++, 6, arg.folder);
+            double *vec = mandelbrot(iterations, zoom, size, *arg.center, *arg.fix, arg.smooth, arg.smoothVal);
+            write(vec, iterations, size, count++, 6, arg.folder, arg.smooth);
             free(vec);
         }
     }

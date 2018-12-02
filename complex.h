@@ -21,4 +21,15 @@ __device__ __host__ void Add(double *imaginaryZ, double *realZ, double imaginary
 	*imaginaryZ = *imaginaryZ + imaginaryC;
 }
 
+__device__ void ABS(double *c, double imaginary, double real) 
+{
+	*c = sqrt(imaginary * imaginary + real * real);
+}
+
+__device__ void sqrABS(double *c, double imaginary, double real) 
+{
+	*c = sqrt(imaginary * imaginary + real * real);
+	*c = *c * *c;
+}
+
 #endif
