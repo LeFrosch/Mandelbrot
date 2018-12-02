@@ -56,9 +56,9 @@ int write(double *vec, int maxIt, Vector2 size, string name, string folder, bool
 
     im.set_pixbuf(pixel);
     if (folder == "root")
-        im.write(name);
+        im.write(name + ".png");
     else
-        im.write(folder + "/" + name);
+        im.write(folder + "/" + name + ".png");
     
     return 0;
 }
