@@ -9,9 +9,14 @@
 using namespace std;
 using namespace png;
 
-const double a = 3.321928095;
-const double b = 0.782985961;
-const double c = 0.413668099;
+string getName(int in, int dez) 
+{
+    string name = to_string(in);
+    for (int i = 0; i < dez - to_string(in).length(); i++)
+        name = "0" + name;
+
+    return name;
+}
 
 void normal(pixel_buffer<rgb_pixel> *pix, double *vec, int maxIt, Vector2 size) 
 {
@@ -29,7 +34,7 @@ void normal(pixel_buffer<rgb_pixel> *pix, double *vec, int maxIt, Vector2 size)
     }
 }
 
-void smoo(pixel_buffer<rgb_pixel> *pix, double *vec, int maxIt, Vector2 size) 
+void smoo(pixel_buffer<rgb_pixel> *pix, double *vec, int maxIt, Vector2 size, double r, double g, double b) 
 {
     int i;
     for (int y = 0; y < (*pix).get_height(); ++y)
@@ -38,19 +43,19 @@ void smoo(pixel_buffer<rgb_pixel> *pix, double *vec, int maxIt, Vector2 size)
         {
             i = y * size.X + x;
 
-            (*pix).set_pixel(x, y, rgb_pixel(255 * (1 - cos(a * vec[i])), 255 * (1 - cos(b * vec[i])), 255 * (1 - cos(c * vec[i]))));
+            (*pix).set_pixel(x, y, rgb_pixel(255 * (1 - cos(r * vec[i])), 255 * (1 - cos(g * vec[i])), 255 * (1 - cos(b * vec[i]))));
         }
     }
 }
 
 
-int write(double *vec, int maxIt, Vector2 size, string name, string folder, bool smooth) 
+int write(double *vec, int maxIt, Vector2 size, string name, string folder, bool smooth, double r, double g, double b) 
 {
     image<rgb_pixel> im((int)size.X, (int)size.Y);
     pixel_buffer<rgb_pixel> pixel(im.get_width(), im.get_height());
     
     if (smooth)
-        smoo(&pixel, vec, maxIt, size);
+        smoo(&pixel, vec, maxIt, size, r, g, b);
     else
         normal(&pixel, vec, maxIt, size);
 
@@ -63,13 +68,9 @@ int write(double *vec, int maxIt, Vector2 size, string name, string folder, bool
     return 0;
 }
 
-int write(double *vec, int maxIt, Vector2 size, int in, int dez, string folder, bool smooth) 
+int write(double *vec, int maxIt, Vector2 size, int in, int dez, string folder, bool smooth, double r, double g, double b) 
 {
-    string name = to_string(in);
-    for (int i = 0; i < dez - to_string(in).length(); i++)
-        name = "0" + name;
-
-    return write(vec, maxIt, size, "image-" + name, folder, smooth);
+    return write(vec, maxIt, size, "image-" + getName(in, dez), folder, smooth, r, g, b);
 }
 
 #endif

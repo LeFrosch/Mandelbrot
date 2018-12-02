@@ -25,6 +25,10 @@ class Args
         string folder;
         bool smooth;
         double smoothVal;
+        double r;
+        double g;
+        double b;
+        bool skip;
 };
 
 Args::Args() 
@@ -41,6 +45,10 @@ Args::Args()
     this->iterations = 10000;
     this->smooth = false;
     this->smoothVal = log(2);
+    this->r = 3.321928095;
+    this->g = 0.782985961;
+    this->b = 0.413668099;
+    this->skip = false;
 }
 
 Args::~Args() 
@@ -54,17 +62,24 @@ void Args::print(void)
 {
     cout << endl << "Arguments: " << endl;
 
-    cout << "   Center: " << (*this->center).X << " | " << (*this->center).Y << endl;
-    cout << "   Fix: " << (*this->fix).X << " | " << (*this->fix).Y << endl;
-    cout << "   Loop: " << (this->loop ? "true" : "false") << endl;
-    cout << "   Zoom: " << this->zoom << endl;
-    if (this->loop) cout << "   End Zoom: " << this->zoomEnd << endl;
-    cout << "   M: " << this->m << endl;
-    cout << "   Step size: " << this->stepsize << endl;
-    if (this->folder != "root") cout << "   Folder: " << this->folder << endl;
+    cout << "   Size:       " << (*this->size).X << " | " << (*this->size).Y << endl;
+    cout << "   Center:     " << (*this->center).X << " | " << (*this->center).Y << endl;
+    cout << "   Fix:        " << (*this->fix).X << " | " << (*this->fix).Y << endl;
+    cout << "   Loop:       " << (this->loop ? "true" : "false") << endl;
+    cout << "   Zoom:       " << this->zoom << endl;
+    if (this->loop) cout << "   End Zoom:   " << this->zoomEnd << endl;
+    cout << "   M:          " << this->m << endl;
+    cout << "   Step size:  " << this->stepsize << endl;
+    if (this->folder != "root") cout << "   Folder:     " << this->folder << endl;
     cout << "   Iterations: " << this->iterations << endl;
-    cout << "   Smooth: " << (this->smooth ? "true" : "false") << endl;
-    if (this->smooth) cout << "   Smoothing value: " << this->smoothVal << endl;
+    cout << "   Smooth:     " << (this->smooth ? "true" : "false") << endl;
+    if (this->smooth) cout << "   Smoothing:  " << this->smoothVal << endl;
+    cout << "   r:          " << this->r << endl;
+    cout << "   g:          " << this->g << endl;
+    cout << "   b:          " << this->b << endl << endl;
+    cout << "   skip:       " << (this->skip ? "true" : "false") << endl;
+
+    cout << "Press enter to start..." << endl;
 }
 
 int find(int argc, char *argv[], string symbol, int exp) 
@@ -165,10 +180,18 @@ Args parse(int argc, char *argv[])
         index = find(argc, argv, "--s", 0);
         if (index != -1) arg.smooth = true;
 
+        index = find(argc, argv, "--rgb", 3);
+        if (index != -1) 
+        {
+            arg.r = stod(argv[index + 1]);
+            arg.g = stod(argv[index + 2]);
+            arg.b = stod(argv[index + 3]);
+        }
+
         index = find(argc, argv, "--h", 0);
         if (index != -1) 
         {
-            cout << endl << "    --size          height and withe of the image. (double)" << endl << "    --center        x and y of the center of the image. (double)" << endl << "    --fix           x and y of the vector added per zoom. (double)" << endl << "    --zoom          sets the start zoom. (double)" << endl << "    --zoomEnd       sets the end of the zoom. (double)" << endl << "    --l             enables auto loop." << endl << "    --m             the m of the linar funktion used to increase the zoom. (double)" << endl << "    --stepsize      the stepsize used in the loop. (double)" << endl << "    --folder        the folder where to put the images. (string)" << endl << "    --iterations    the iterations per pixel. (int)" << endl << "    --s             enables the smooth color algorithm." << endl << "    --sv            sets the value for the smooth color algorithm. (double)" << endl<< endl;
+            cout << endl << "    --size          height and withe of the image. (double, double)" << endl << "    --center        x and y of the center of the image. (double)" << endl << "    --fix           x and y of the vector added per zoom. (double)" << endl << "    --zoom          sets the start zoom. (double)" << endl << "    --zoomEnd       sets the end of the zoom. (double)" << endl << "    --l             enables auto loop." << endl << "    --m             the m of the linar funktion used to increase the zoom. (double)" << endl << "    --stepsize      the stepsize used in the loop. (double)" << endl << "    --folder        the folder where to put the images. (string)" << endl << "    --iterations    the iterations per pixel. (int)" << endl << "    --s             enables the smooth color algorithm." << endl << "    --sv            sets the value for the smooth color algorithm. (double)" << endl << "    --skip          skips image if one is found with the same index." << endl << endl;
         }
     }
     catch (...) 
