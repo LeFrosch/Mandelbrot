@@ -31,6 +31,10 @@ int main(int argc, char *argv[])
         {
             if (arg.skip && exists("image-" + getName(count, 6) + ".png")) 
             {
+                cout << "skipped image" << endl;
+            }
+            else 
+            {
                 cout << zoom << " out of " << arg.zoomEnd << " ";
                 start = clock();
                 double *vec = mandelbrot(arg.iterations, zoom, *arg.size, *arg.center, *arg.fix, arg.smooth, arg.smoothVal);
@@ -38,10 +42,6 @@ int main(int argc, char *argv[])
                 free(vec);
                 end = clock();
                 cout << "time: " << ((double)(end-start) / CLOCKS_PER_SEC) << "ms";
-            }
-            else 
-            {
-                cout << "skipped image" << endl;
             }
             count++;
         }
