@@ -1,3 +1,4 @@
+#pragma once
 #ifndef parser
 #define parser
 
@@ -29,6 +30,11 @@ class Args
         double g;
         double b;
         bool skip;
+        bool fil;
+        string input;
+        double filterval;
+        int from;
+        int to;
 };
 
 Args::Args() 
@@ -49,6 +55,9 @@ Args::Args()
     this->g = 0.782985961;
     this->b = 0.413668099;
     this->skip = false;
+    this->fil = false;
+    this->input = "none";
+    this->filterval = 0.25;
 }
 
 Args::~Args() 
@@ -76,10 +85,13 @@ void Args::print(void)
     if (this->smooth) cout << "   Smoothing:  " << this->smoothVal << endl;
     cout << "   r:          " << this->r << endl;
     cout << "   g:          " << this->g << endl;
-    cout << "   b:          " << this->b << endl << endl;
-    cout << "   skip:       " << (this->skip ? "true" : "false") << endl;
+    cout << "   b:          " << this->b << endl;
+    cout << "   Skip:       " << (this->skip ? "true" : "false") << endl;
+    cout << "   Filter:     " << (this->fil ? "true" : "false") << endl;
+    if (this->fil) cout << "   Filter Val: " << this->filterval << endl;
+    if (this->fil) cout << "   Input:      " << this->input << endl;
 
-    cout << "Press enter to start..." << endl;
+    cout << endl << "Press enter to start..." << endl;
 }
 
 int find(int argc, char *argv[], string symbol, int exp) 
@@ -179,6 +191,22 @@ Args parse(int argc, char *argv[])
 
         index = find(argc, argv, "--s", 0);
         if (index != -1) arg.smooth = true;
+
+        index = find(argc, argv, "--skip", 0);
+        if (index != -1) arg.skip = true;
+
+        index = find(argc, argv, "--filter", 1);
+        if (index != -1) 
+        {
+            arg.fil = true;
+            arg.filterval = stod(argv[index + 1]);
+        }
+
+        index = find(argc, argv, "--i", 1);
+        if (index != -1) 
+        {
+            arg.input = argv[index + 1];
+        }
 
         index = find(argc, argv, "--rgb", 3);
         if (index != -1) 
