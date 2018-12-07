@@ -32,9 +32,10 @@ class Args
         bool skip;
         bool fil;
         string input;
-        double filterval;
         int from;
         int to;
+        int decimals;
+        int numberoffset;
 };
 
 Args::Args() 
@@ -57,7 +58,10 @@ Args::Args()
     this->skip = false;
     this->fil = false;
     this->input = "none";
-    this->filterval = 0.25;
+    this->from = 0;
+    this->to = 1;
+    this->decimals = 1;
+    this->numberoffset = 0;
 }
 
 Args::~Args() 
@@ -88,8 +92,10 @@ void Args::print(void)
     cout << "   b:          " << this->b << endl;
     cout << "   Skip:       " << (this->skip ? "true" : "false") << endl;
     cout << "   Filter:     " << (this->fil ? "true" : "false") << endl;
-    if (this->fil) cout << "   Filter Val: " << this->filterval << endl;
     if (this->fil) cout << "   Input:      " << this->input << endl;
+    if (this->fil && this->loop) cout << "   Decimals:   " << this->decimals << endl;
+    if (this->fil && this->loop) cout << "   From:       " << this->from << endl;
+    if (this->fil && this->loop) cout << "   To:         " << this->to << endl;
 
     cout << endl << "Press enter to start..." << endl;
 }
@@ -117,6 +123,26 @@ int find(int argc, char *argv[], string symbol, int exp)
     return index;
 }
 
+void parseLoop(Args *arg, string in) 
+{
+    int i = in.find("%");
+    
+    if (i == -1) 
+    {
+        cout << "Invalid Name, use %[number decimals] for a name used instide of the loop" << endl;
+        exit(2);
+    }
+
+    (*arg).numberoffset = i;
+    (*arg).decimals = stoi(in.substr(i + 1, 1));
+    (*arg).input = in.substr(0, i);
+
+    for (int i = 0; i < (*arg).decimals; i++)
+        (*arg).input += "0";
+
+    (*arg).input += in.substr(i + 2, in.length() - i - 2);
+}
+
 Args parse(int argc, char *argv[]) 
 {
     Args arg = Args();
@@ -140,8 +166,8 @@ Args parse(int argc, char *argv[])
         index = find(argc, argv, "--size", 2);
         if (index != -1) 
         {
-            (*arg.size).X = stod(argv[index + 1]);
-            (*arg.size).Y = stod(argv[index + 2]);
+            (*arg.size).X = stoi(argv[index + 1]);
+            (*arg.size).Y = stoi(argv[index + 2]);
         }
 
         index = find(argc, argv, "--zoom", 1);
@@ -195,17 +221,31 @@ Args parse(int argc, char *argv[])
         index = find(argc, argv, "--skip", 0);
         if (index != -1) arg.skip = true;
 
-        index = find(argc, argv, "--filter", 1);
+        index = find(argc, argv, "--filter", 0);
         if (index != -1) 
         {
             arg.fil = true;
-            arg.filterval = stod(argv[index + 1]);
         }
 
         index = find(argc, argv, "--i", 1);
         if (index != -1) 
         {
-            arg.input = argv[index + 1];
+            if (!arg.loop)
+                arg.input = argv[index + 1];
+            else 
+                parseLoop(&arg, argv[index + 1]);
+        }
+
+        index = find(argc, argv, "--from", 1);
+        if (index != -1)
+        {
+            arg.from = stoi(argv[index + 1]);
+        }
+
+        index = find(argc, argv, "--to", 1);
+        if (index != -1)
+        {
+            arg.to = stoi(argv[index + 1]);
         }
 
         index = find(argc, argv, "--rgb", 3);
