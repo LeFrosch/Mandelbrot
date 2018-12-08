@@ -31,6 +31,7 @@ class Args
         double b;
         bool skip;
         bool fil;
+        double filterval;
         string input;
         int from;
         int to;
@@ -57,6 +58,7 @@ Args::Args()
     this->b = 0.413668099;
     this->skip = false;
     this->fil = false;
+    this->filterval = 1;
     this->input = "none";
     this->from = 0;
     this->to = 1;
@@ -73,7 +75,7 @@ Args::~Args()
 
 void Args::print(void) 
 {
-    cout << endl << "Arguments: " << endl;
+    cout << endl << "Calculations are goning to be done on the GPU with the following settings:" << endl << endl;
 
     cout << "   Size:       " << (*this->size).X << " | " << (*this->size).Y << endl;
     cout << "   Center:     " << (*this->center).X << " | " << (*this->center).Y << endl;
@@ -92,6 +94,7 @@ void Args::print(void)
     cout << "   b:          " << this->b << endl;
     cout << "   Skip:       " << (this->skip ? "true" : "false") << endl;
     cout << "   Filter:     " << (this->fil ? "true" : "false") << endl;
+    if (this->fil) cout << "   Filter Val: " << this->filterval << endl;
     if (this->fil) cout << "   Input:      " << this->input << endl;
     if (this->fil && this->loop) cout << "   Decimals:   " << this->decimals << endl;
     if (this->fil && this->loop) cout << "   From:       " << this->from << endl;
@@ -221,9 +224,10 @@ Args parse(int argc, char *argv[])
         index = find(argc, argv, "--skip", 0);
         if (index != -1) arg.skip = true;
 
-        index = find(argc, argv, "--filter", 0);
+        index = find(argc, argv, "--filter", 1);
         if (index != -1) 
         {
+            arg.filterval = stod(argv[index + 1]);
             arg.fil = true;
         }
 
@@ -257,9 +261,12 @@ Args parse(int argc, char *argv[])
         }
 
         index = find(argc, argv, "--h", 0);
-        if (index != -1) 
+        int index2 = find(argc, argv, "--help", 0);
+        if (index != -1 || index2 != -1) 
         {
-            cout << endl << "    --size          height and withe of the image. (double, double)" << endl << "    --center        x and y of the center of the image. (double)" << endl << "    --fix           x and y of the vector added per zoom. (double)" << endl << "    --zoom          sets the start zoom. (double)" << endl << "    --zoomEnd       sets the end of the zoom. (double)" << endl << "    --l             enables auto loop." << endl << "    --m             the m of the linar funktion used to increase the zoom. (double)" << endl << "    --stepsize      the stepsize used in the loop. (double)" << endl << "    --folder        the folder where to put the images. (string)" << endl << "    --iterations    the iterations per pixel. (int)" << endl << "    --s             enables the smooth color algorithm." << endl << "    --sv            sets the value for the smooth color algorithm. (double)" << endl << "    --skip          skips image if one is found with the same index." << endl << endl;
+            cout << endl << "This is a program to to calculate the Madnelbrot set. It runs on your GPU using CUDA." << endl;
+            cout << endl << "    --size          height and withe of the image. (double, double)" << endl << "    --center        x and y of the center of the image. (double)" << endl << "    --fix           x and y of the vector added per zoom. (double)" << endl << "    --zoom          sets the start zoom. (double)" << endl << "    --zoomEnd       sets the end of the zoom. (double)" << endl << "    --l             enables auto loop. (bool)" << endl << "    --m             the m of the linar funktion used to increase the zoom. (double)" << endl << "    --stepsize      the stepsize used in the loop. (double)" << endl << "    --folder        the folder where to put the images. (string)" << endl << "    --iterations    the iterations per pixel. (int)" << endl << "    --s             enables the smooth color algorithm. (bool)" << endl << "    --sv            sets the value for the smooth color algorithm. (double)" << endl << "    --skip          skips image if one is found with the same index. (bool)" << endl << "    --filtrt        enables an image filter and sets a value used to filter the image. (double)" << endl << "    --i             defindes an input file for the filter, if no input is defind an generated image will be filterd. (string)" << endl << "    --from          start index for an image set. (int)" << endl << "    --to            end index for an image set. (int)" << endl << endl;
+            exit(0);
         }
     }
     catch (...) 

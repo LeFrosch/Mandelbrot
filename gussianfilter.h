@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cmath>
 #include "vector2.h"
+#include "pngwriter.h"
 
 using namespace png;
 using namespace std;
@@ -202,74 +203,6 @@ __global__ void blure3D(double matrix[], double result[], double input0[], doubl
     }
 }
 
-pixel_buffer<rgb_pixel> kernalcall3D(pixel_buffer<rgb_pixel> *in0, pixel_buffer<rgb_pixel> *in1) 
-{
-    double *matrix = get3DMatrix();
-    int width = (*in1).get_width();
-    int height = (*in1).get_height();
-
-    int n = width * height * 3;
-    size_t size = n * sizeof(double);
-
-    double *hinput0 = (double*)malloc(size);
-    double *hinput1 = (double*)malloc(size);
-    double *houtput = (double*)malloc(size);
-    double *dinput0 = 0;
-    cudaMalloc(&dinput0, size);
-    double *dinput1 = 0;
-    cudaMalloc(&dinput1, size);
-    double *doutput = 0;
-    cudaMalloc(&doutput, size);
-    double *dmatrix = 0;
-    cudaMalloc(&dmatrix, 50 * sizeof(double));
-
-    for (int i = 0; i < n; i += 3) 
-    {
-        int x = (double)(i / 3) / (double)height;
-        int y = (i / 3) % height;
-
-        rgb_pixel p = (*in0).get_pixel(x, y);
-        hinput0[i] = p.red;
-        hinput0[i + 1] = p.green;
-        hinput0[i + 2] = p.blue;
-
-        p = (*in1).get_pixel(x, y);
-        hinput1[i] = p.red;
-        hinput1[i + 1] = p.green;
-        hinput1[i + 2] = p.blue;
-    }
-
-    cudaMemcpy(dinput0, hinput0, size, cudaMemcpyHostToDevice);
-    cudaMemcpy(dinput1, hinput1, size, cudaMemcpyHostToDevice);
-    cudaMemcpy(dmatrix, matrix, sizeof(double) * 25, cudaMemcpyHostToDevice);
-
-    blure3D<<<16, 1024>>>(dmatrix, doutput, dinput0, dinput1, width, height);
-
-    cudaMemcpy(houtput, doutput, size, cudaMemcpyDeviceToHost);
-
-    free(hinput0);
-    free(hinput1);
-    free(matrix);
-    cudaFree(dinput0);
-    cudaFree(dinput1);
-    cudaFree(dmatrix);
-
-    pixel_buffer<rgb_pixel> result = pixel_buffer<rgb_pixel>(width, height);
-
-    for (int i = 0; i < n; i += 3) 
-    {
-        int x = (double)(i / 3) / (double)height;
-        int y = (i / 3) % height;
-
-        result.set_pixel(x, y, rgb_pixel(houtput[i], houtput[i + 1], houtput[i + 2]));
-    }
-
-    free(houtput);
-    cudaFree(doutput);
-
-    return result;
-}
-
 #pragma endregion
 
 void openImage(string path, string folder) 
@@ -290,25 +223,109 @@ void openImage(string path, string folder)
     }
 }
 
-void open2Images(string path0, string path1, string folder) 
+void fromTo(string name, string folder, int from, int to, int numberoffset, int decimals) 
 {
-    // lazy solution, feel free to fix this
-    image<rgb_pixel> im0(path0);
-    image<rgb_pixel> im1(path1);
-    pixel_buffer<rgb_pixel> buffer0 = im0.get_pixbuf();
-    pixel_buffer<rgb_pixel> buffer1 = im1.get_pixbuf();
+    double *matrix = get3DMatrix();
+    double *dmatrix = 0;
+    cudaMalloc(&dmatrix, 50 * sizeof(double));
+    cudaMemcpy(dmatrix, matrix, sizeof(double) * 25, cudaMemcpyHostToDevice);
 
-    pixel_buffer<rgb_pixel> result = kernalcall3D(&buffer0, &buffer1);
+    string name1 = name;
 
-    im1.set_pixbuf(result);
+    image<rgb_pixel> im1;
 
-    if (folder == "root")
-        im1.write(path1);
-    else
+    name1.replace(numberoffset, decimals, getName(from, decimals));
+
+    im1 = image<rgb_pixel>(name1);
+
+    int width = im1.get_width();
+    int height = im1.get_height();
+
+    int n = width * height * 3;
+    size_t size = n * sizeof(double);
+
+    double *hinput1 = (double*)malloc(size);
+    double *houtput = (double*)malloc(size);
+    double *dinput0 = 0;
+    cudaMalloc(&dinput0, size);
+    double *dinput1 = 0;
+    cudaMalloc(&dinput1, size);
+    double *doutput = 0;
+    cudaMalloc(&doutput, size);
+
+    for (int i = 0; i < n; i += 3) 
     {
-        size_t index = path1.find_last_of("/\\");
-        im1.write(folder + "/" + path1.substr(index + 1));
+        int x = (double)(i / 3) / (double)height;
+        int y = (i / 3) % height;
+
+        rgb_pixel p = im1.get_pixel(x, y);
+        hinput1[i] = p.red;
+        hinput1[i + 1] = p.green;
+        hinput1[i + 2] = p.blue;
     }
+
+    cudaMemcpy(dinput1, hinput1, size, cudaMemcpyHostToDevice);
+    
+    for (int j = from + 1; j <= to; j++) 
+    {
+        name1 = name;
+        name1.replace(numberoffset, decimals, getName(j, decimals));
+
+        cout << "filterimg image: " << name1 << endl;
+
+        im1 = image<rgb_pixel>(name1);
+
+        for (int i = 0; i < n; i += 3) 
+        {
+            int x = (double)(i / 3) / (double)height;
+            int y = (i / 3) % height;
+
+            rgb_pixel p = im1.get_pixel(x, y);
+            hinput1[i] = p.red;
+            hinput1[i + 1] = p.green;
+            hinput1[i + 2] = p.blue;
+        } 
+
+        gpuErrchk(cudaMemcpy(dinput0, dinput1, size, cudaMemcpyDeviceToDevice));
+        gpuErrchk(cudaMemcpy(dinput1, hinput1, size, cudaMemcpyHostToDevice));
+
+        blure3D<<<16, 1024>>>(dmatrix, doutput, dinput0, dinput1, width, height);
+
+        gpuErrchk(cudaMemcpy(houtput, doutput, size, cudaMemcpyDeviceToHost));
+        gpuErrchk(cudaPeekAtLastError());
+
+        pixel_buffer<rgb_pixel> result = pixel_buffer<rgb_pixel>(width, height);
+
+        for (int i = 0; i < n; i += 3) 
+        {
+            int x = (double)(i / 3) / (double)height;
+            int y = (i / 3) % height;
+
+            result.set_pixel(x, y, rgb_pixel(houtput[i], houtput[i + 1], houtput[i + 2]));
+        }
+
+        image<rgb_pixel> out(width, height);
+        out.set_pixbuf(result);
+
+        if (folder == "root") 
+        {
+            im1.write(name1);
+        }
+        else
+        {
+            size_t index = name1.find_last_of("/\\");
+            im1.write(folder + "/" + name1.substr(index + 1));
+        }
+    }
+
+    cudaFree(dinput0);
+    cudaFree(dinput1);
+    cudaFree(doutput);
+    cudaFree(dmatrix);
+
+    free(hinput1);
+    free(houtput);
+    free(matrix);
 }
 
 #endif

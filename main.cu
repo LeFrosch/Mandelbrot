@@ -49,7 +49,17 @@ void fractal(Args arg)
     }
 }
 
-void filter
+void filter(Args arg) 
+{
+    if (!arg.loop) 
+    {
+        openImage(arg.input, arg.folder);
+    }
+    else  
+    {
+        fromTo(arg.input, arg.folder, arg.from, arg.to, arg.numberoffset, arg.decimals);
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -61,8 +71,8 @@ int main(int argc, char *argv[])
         return 0;
     }
     else 
-    {;
-        openImage(arg.input, arg.folder);
+    {
+        filter(arg);
         return 0;
     }
 }
