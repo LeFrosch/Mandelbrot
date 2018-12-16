@@ -53,7 +53,7 @@ void filter(Args arg)
 {
     if (!arg.loop) 
     {
-        openImage(arg.input, arg.folder);
+        openImage(arg.input, arg.folder, arg.filterval);
     }
     else  
     {

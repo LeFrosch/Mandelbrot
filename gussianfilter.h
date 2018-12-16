@@ -15,7 +15,7 @@ const double matrix1[25]
 {
     0, 1, 2, 1, 0,
     1, 3, 5, 3, 1,
-    2, 5, 9, 5, 2,
+    2, 5, 16, 5, 2,
     1, 3, 5, 3, 1,
     0, 1, 2, 1, 0
 };
@@ -31,19 +31,25 @@ const double matrix0[25]
 
 #pragma region 2D
 
-double* get2DMatrix()
+double* get2DMatrix(double filterVal)
 {
     double *guassian = (double*)malloc(25 * sizeof(double));
     double sum = 0;
 
     for (int i = 0; i < 25; i++) 
     {
-        sum += matrix1[i];
+        if (i == 12)
+            sum += filterVal;
+        else
+            sum += matrix1[i];
     }
 
     for (int i = 0; i < 25; i++) 
     {
-        guassian[i] = matrix1[i] / sum; 
+        if (i == 12)
+            guassian[i] = filterVal / sum;
+        else
+            guassian[i] = matrix1[i] / sum; 
     }
 
     return guassian;
@@ -82,9 +88,9 @@ __global__ void blure2D(double matrix[], double result[], double input[], int wi
     }
 }
 
-pixel_buffer<rgb_pixel> kernalcall2D(pixel_buffer<rgb_pixel> *in) 
+pixel_buffer<rgb_pixel> kernalcall2D(pixel_buffer<rgb_pixel> *in, double filterVal) 
 {
-    double *matrix = get2DMatrix();
+    double *matrix = get2DMatrix(filterVal);
     int width = (*in).get_width();
     int height = (*in).get_height();
 
@@ -205,12 +211,12 @@ __global__ void blure3D(double matrix[], double result[], double input0[], doubl
 
 #pragma endregion
 
-void openImage(string path, string folder) 
+void openImage(string path, string folder, double filterVal) 
 {
     image<rgb_pixel> im(path);
     pixel_buffer<rgb_pixel> buffer = im.get_pixbuf();
 
-    pixel_buffer<rgb_pixel> result = kernalcall2D(&buffer);
+    pixel_buffer<rgb_pixel> result = kernalcall2D(&buffer, filterVal);
 
     im.set_pixbuf(result);
 
